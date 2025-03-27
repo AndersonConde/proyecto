@@ -1,0 +1,107 @@
+{% extends "layouts/template.html" %}
+{% load static %}
+
+{% block contenido %}
+<h1>{{ title }}</h1>
+
+<div class="row">
+    {% for oferta in ofertas %}
+    <div class="col-md-4 col-xs-6">
+        <div class="product">
+            <div class="product-img">
+                <img src="{% static './img/product06.png' %}{{ oferta.imagen }}" alt="{{ oferta.titulo }}">
+                <div class="product-label">
+                    
+                </div>
+            </div>
+            <div class="product-body">
+                <h3 class="product-name"><a href="#">{{ oferta.titulo }}</a></h3>
+                <h4 class="product-price">$ {{ oferta.precio_oferta }} <del class="product-old-price">${{ oferta.precio_original }}</del></h4>
+
+                <!-- Descuento al lado del botón -->
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn btn-info btn-sm" onclick="mostrarDescripcion('{{ oferta.id }}')">Ver Más</button>
+                    <span class="badge badge-success" style="background-color: #28a745; padding: 5px 10px; border-radius: 5px;">
+                        -{{ oferta.descuento }}% OFF
+                    </span>
+                </div>
+
+                <div id="descripcion-{{ oferta.id }}" class="descripcion" style="display: none;">
+                    <p>{{ oferta.descripcion }}</p>
+                </div>
+            </div>
+            <div class="add-to-cart">
+                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> Agregar al carrito</button>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p id="mensaje-bienvenida" style="display: inline-block;">Bienvenidos a </p><span id="cursor" style="display: inline-block; width: 10px; background: #28a745; height: 20px; margin-left: 5px; animation: blink 0.8s infinite;"></span>
+    {% endfor %}
+</div>
+
+<script>
+    function mostrarDescripcion(id) {
+        var descripcion = document.getElementById("descripcion-" + id);
+        var boton = document.querySelector(`button[onclick="mostrarDescripcion('${id}')"]`);
+
+        if (descripcion.style.display === "none") {
+            descripcion.style.display = "block";
+            boton.innerHTML = "Ver Menos";
+        } else {
+            descripcion.style.display = "none";
+            boton.innerHTML = "Ver Más";
+        }
+    }
+
+    // Efecto de texto escribiendo con cursor verde parpadeante y reinicio automático
+    document.addEventListener("DOMContentLoaded", function () {
+        const texto = "\uD83D\uDD0C ¡Bienvenido a TechnoLogyStore! Las mejores ofertas en tecnología están aquí... Explora, descubre y lleva lo mejor al mejor precio.";
+        let i = 0;
+        const velocidad = 50; // Velocidad de escritura
+        const parrafo = document.getElementById("mensaje-bienvenida");
+        
+        function escribirTexto() {
+            if (i < texto.length) {
+                parrafo.innerHTML += texto.charAt(i);
+                i++;
+                setTimeout(escribirTexto, velocidad);
+            } else {
+                setTimeout(() => {
+                    parrafo.innerHTML = ""; // Limpia el texto
+                    i = 0;
+                    escribirTexto();
+                }, 3000); // Reiniciar después de 3 segundos
+            }
+        }
+        parrafo.innerHTML = "";
+        escribirTexto();
+    });
+
+    // Animación de cursor parpadeante
+    const style = document.createElement("style");
+    style.innerHTML = `
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }`;
+    document.head.appendChild(style);
+</script>
+
+<!-- Redes Sociales -->
+<div style="margin-top: 10px;">
+    <a href="https://www.facebook.com/share/16Agyry1x3/" target="_blank" class="btn btn-primary btn-sm">
+        <i class="fa fa-facebook"></i> TheConde ☠ ©
+    </a>
+    <a href="https://wa.link/7u3og3" target="_blank" class="btn btn-success btn-sm">
+        <i class="fa fa-whatsapp"></i> WhatsApp 👽©
+    </a>
+</div>
+
+<div style="text-align: center; margin-top: 50px;">
+    <a href="{% url 'index' %}" class="btn btn-primary btn-lg">
+        Ver Ofertas
+    </a>
+</div>
+
+{% endblock contenido %}
